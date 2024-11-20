@@ -1,24 +1,36 @@
-/* eslint-disable react/prop-types */
-import { Square } from './Square'
+import { useEffect, useState } from "react";
+import { Square } from "./Square";
 
-export function WinnerModal ({ winner, resetGame }) {
-  if (winner === null) return null
+// eslint-disable-next-line react/prop-types
+export function WinnerModal({ winner, resetGame }) {
+    const [showModal, setShowModal] = useState(false);
 
-  const winnerText = winner === false ? 'Empate' : 'Ganó:'
+    useEffect(() => {
+        if (winner !== null) {
+            const timer = setTimeout(() => {
+                setShowModal(true);
+            }, 500); // Espera 1 segundo para mostrar el modal
+            return () => clearTimeout(timer); // Limpia el temporizador si el componente se desmonta o cambia el estado
+        } else {
+            setShowModal(false); // Asegura que el modal se oculte cuando no haya ganador
+        }
+    }, [winner]);
 
-  return (
-    <section className='winner'>
-      <div className='text'>
-        <h2>{winnerText}</h2>
+    if (winner === null || !showModal) return null;
 
-        <header className='win'>
-          {winner && <Square>{winner}</Square>}
-        </header>
+    const winnerText = winner === false ? "Empate" : "Ganó:";
 
-        <footer>
-          <button onClick={resetGame}>Empezar de nuevo</button>
-        </footer>
-      </div>
-    </section>
-  )
+    return (
+        <section className="winner">
+            <div className="text">
+                <h2>{winnerText}</h2>
+
+                <header className="win">{winner && <Square>{winner}</Square>}</header>
+
+                <footer>
+                    <button onClick={resetGame}>Empezar de nuevo</button>
+                </footer>
+            </div>
+        </section>
+    );
 }
